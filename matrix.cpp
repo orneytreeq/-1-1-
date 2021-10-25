@@ -1,5 +1,5 @@
 #include <iostream>
-
+//10 вариант
 using namespace std;
 class Matrix
 {
