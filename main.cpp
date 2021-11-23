@@ -12,13 +12,13 @@
 #include <vector>
 
 
-// 5 ЛАБ
-// 10 ВАРИАНТ
+// 5 Г‹ГЂГЃ
+// 10 Г‚ГЂГђГ€ГЂГЌГ’
 
 
 
 /*
-ПРИМЕР ФАЙЛА note.txt где хранятся записи ноутбуков:
+ГЏГђГ€ГЊГ…Гђ Г”ГЂГ‰Г‹ГЂ note.txt ГЈГ¤ГҐ ГµГ°Г Г­ГїГІГ±Гї Г§Г ГЇГЁГ±ГЁ Г­Г®ГіГІГЎГіГЄГ®Гў:
 
 Lenovo-2183 | 12.4/123.2/1.6 | 523.123 | 39284 | 123
 Apple_MacBook_Pro_16 | 12.4/123.2/1.6 | 523.123 | 39284 | 45
@@ -28,16 +28,16 @@ Apple_MacBook_Pro_15 | 12.4/123.2/1.6 | 523.123 | 39284 | 45
 */
 
 using namespace std;
-struct size { // габаритные размеры
+struct size { // ГЈГ ГЎГ Г°ГЁГІГ­Г»ГҐ Г°Г Г§Г¬ГҐГ°Г»
     float x;
     float y;
     float z;
   };
 struct LAPTOP{
-  string model; // наименование
-  size s; //размеры
-  float w; // вес
-  int price; // цена
+  string model; // Г­Г ГЁГ¬ГҐГ­Г®ГўГ Г­ГЁГҐ
+  size s; //Г°Г Г§Г¬ГҐГ°Г»
+  float w; // ГўГҐГ±
+  int price; // Г¶ГҐГ­Г 
   int frequency;
 };
 
@@ -74,7 +74,7 @@ vector<LAPTOP> read_laptop_file(string FILE_PATH, bool b)
 {
     string temp;
     vector<LAPTOP> my_laptops;
-    ifstream fi(FILE_PATH); // окрываем файл для чтения
+    ifstream fi(FILE_PATH); // Г®ГЄГ°Г»ГўГ ГҐГ¬ ГґГ Г©Г« Г¤Г«Гї Г·ГІГҐГ­ГЁГї
     if (fi.is_open())
     {
         while (getline(fi, temp))
@@ -96,7 +96,7 @@ vector<LAPTOP> read_laptop_file(string FILE_PATH, bool b)
             if ((b) && (new_one.frequency>120))
             {
                 my_laptops.push_back(new_one);
-                //add_record_to_the_file("D:\\frequency_120.txt", new_one);
+                add_record_to_the_file("D:\\frequency_120.txt", new_one);
             } else
             {
                 my_laptops.push_back(new_one);
@@ -105,7 +105,7 @@ vector<LAPTOP> read_laptop_file(string FILE_PATH, bool b)
     }
     fi.close();
 
-    sort(my_laptops.begin(), my_laptops.end(), less_than_key());
+    //sort(my_laptops.begin(), my_laptops.end(), less_than_key());
 
 
     return my_laptops;
@@ -115,10 +115,10 @@ vector<LAPTOP> read_laptop_file(string FILE_PATH, bool b)
 
 int main()
 {
-    //читаем записи из note.txt / второй аргумент true/false - фильтр для процессора
-    vector<LAPTOP> my_laptops = read_laptop_file("D:\\note.txt",true);// второй аргумент - флаг для записи только с частотой > 120мгц
+    //Г·ГЁГІГ ГҐГ¬ Г§Г ГЇГЁГ±ГЁ ГЁГ§ note.txt / ГўГІГ®Г°Г®Г© Г Г°ГЈГіГ¬ГҐГ­ГІ true/false - ГґГЁГ«ГјГІГ° Г¤Г«Гї ГЇГ°Г®Г¶ГҐГ±Г±Г®Г°Г 
+    vector<LAPTOP> my_laptops = read_laptop_file("D:\\note.txt",true);// ГўГІГ®Г°Г®Г© Г Г°ГЈГіГ¬ГҐГ­ГІ - ГґГ«Г ГЈ Г¤Г«Гї Г§Г ГЇГЁГ±ГЁ ГІГ®Г«ГјГЄГ® Г± Г·Г Г±ГІГ®ГІГ®Г© > 120Г¬ГЈГ¶
 
-    //Создаем новую запись ноутбука, чтобы потом добавить:
+    //Г‘Г®Г§Г¤Г ГҐГ¬ Г­Г®ГўГіГѕ Г§Г ГЇГЁГ±Гј Г­Г®ГіГІГЎГіГЄГ , Г·ГІГ®ГЎГ» ГЇГ®ГІГ®Г¬ Г¤Г®ГЎГ ГўГЁГІГј:
     LAPTOP my_new_laptop;
     my_new_laptop.model = "ggg312";
     size my_new_laptop_size = {12.2, 12.2, 12.2};
@@ -128,7 +128,7 @@ int main()
     my_new_laptop.frequency = 23;
 
 
-    //добавляем:
+    //Г¤Г®ГЎГ ГўГ«ГїГҐГ¬:
     add_record_to_the_file("D:\\note.txt", my_new_laptop);
 
 
