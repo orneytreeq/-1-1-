@@ -12,13 +12,13 @@
 #include <vector>
 
 
-// 5 ËÀÁ
-// 10 ÂÀÐÈÀÍÒ
+// 5 лаб
+// 10 вариант
 
 
 
 /*
-ÏÐÈÌÅÐ ÔÀÉËÀ note.txt ãäå õðàíÿòñÿ çàïèñè íîóòáóêîâ:
+пример файла note.txt:
 
 Lenovo-2183 | 12.4/123.2/1.6 | 523.123 | 39284 | 123
 Apple_MacBook_Pro_16 | 12.4/123.2/1.6 | 523.123 | 39284 | 45
@@ -28,16 +28,16 @@ Apple_MacBook_Pro_15 | 12.4/123.2/1.6 | 523.123 | 39284 | 45
 */
 
 using namespace std;
-struct size { // ãàáàðèòíûå ðàçìåðû
+struct size { 
     float x;
     float y;
     float z;
   };
 struct LAPTOP{
-  string model; // íàèìåíîâàíèå
-  size s; //ðàçìåðû
-  float w; // âåñ
-  int price; // öåíà
+  string model; 
+  size s;
+  float w; 
+  int price; 
   int frequency;
 };
 
@@ -115,10 +115,11 @@ vector<LAPTOP> read_laptop_file(string FILE_PATH, bool b)
 
 int main()
 {
-    //÷èòàåì çàïèñè èç note.txt / âòîðîé àðãóìåíò true/false - ôèëüòð äëÿ ïðîöåññîðà
-    vector<LAPTOP> my_laptops = read_laptop_file("D:\\note.txt",true);// âòîðîé àðãóìåíò - ôëàã äëÿ çàïèñè òîëüêî ñ ÷àñòîòîé > 120ìãö
+    //считываем note.txt и вектор записей сохраняем в my_laptops:
+    // второй аргумент true/false - флаг фильтра частоты > 120
+    vector<LAPTOP> my_laptops = read_laptop_file("D:\\note.txt",true);
 
-    //Ñîçäàåì íîâóþ çàïèñü íîóòáóêà, ÷òîáû ïîòîì äîáàâèòü:
+    //создаем новую запись LAPTOP:
     LAPTOP my_new_laptop;
     my_new_laptop.model = "ggg312";
     size my_new_laptop_size = {12.2, 12.2, 12.2};
@@ -128,7 +129,7 @@ int main()
     my_new_laptop.frequency = 23;
 
 
-    //äîáàâëÿåì:
+    //доабвляем в конец файла note.txt:
     add_record_to_the_file("D:\\note.txt", my_new_laptop);
 
 
