@@ -1,139 +1,229 @@
 #include <iostream>
-#include <fstream>
-#include <vector>
-#include <cstring>
-#include <stdio.h>
-#include <string.h>
-#include <string>
-#include <sstream>
-#include <iterator>
-#include <algorithm>
-#include <array>
-#include <vector>
+
+using namespace std;
 
 
-// 5 лаб
-// 10 вариант
-
-
+//LAB-6 Вариант-10
 
 /*
-пример файла note.txt:
+Предметная область онлайн-аптеки:
 
-Lenovo-2183 | 12.4/123.2/1.6 | 523.123 | 39284 | 123
-Apple_MacBook_Pro_16 | 12.4/123.2/1.6 | 523.123 | 39284 | 45
-HUAWEI-123 | 12.4/123.2/1.6 | 523.123 | 39284 | 123
-Apple_MacBook_Pro_15 | 12.4/123.2/1.6 | 523.123 | 39284 | 45
+Человек заходит в онлайн-аптеку, регистрируется, вводит банковские данные
+Согласно рецепту (Pharmacy_receipt) человек пополняет свою корзину (array of Product) лекарствами и делает запрос на покупку (request_on_purchcase),
+прилагая рецепт, который ему дал доктор
+Фармацевт проверяет наличие рецепта и совершает покупку
+
+
+конструктор копирования и оператор присваивания реализованы в классе Pharmacy_receipt
 
 */
 
-using namespace std;
-struct size { 
-    float x;
-    float y;
-    float z;
-  };
-struct LAPTOP{
-  string model; 
-  size s;
-  float w; 
-  int price; 
-  int frequency;
+struct Bank_card_info // Банковская информация
+{
+    string card_number;
+    string expiration_date;
+    string security_code;
 };
 
 
-vector<string> my_split(string temp,string delim)
+
+
+
+
+
+
+
+
+
+
+class Product // лекарство в аптеке, которое фармацевт может продать
 {
-    //vector<string> arr;
-
-    string space_delimiter = delim;
-    vector<string> words{};
-    temp = temp+delim;
-    size_t pos = 0;
-    while ((pos = temp.find(space_delimiter)) != string::npos) {
-        words.push_back(temp.substr(0, pos));
-        temp.erase(0, pos + space_delimiter.length());
-    }
-    return words;
-}
-
-void add_record_to_the_file(string FILE_PATH, LAPTOP lap)
-{
-    string new_line;
-    new_line = lap.model + " | " + to_string(lap.s.x)+"/"+to_string(lap.s.y)+"/"+to_string(lap.s.z)+" | "+to_string(lap.w)+" | "+to_string(lap.price)+" | "+to_string(lap.frequency);
-    ofstream out(FILE_PATH, std::ios_base::app | std::ios_base::out);
-    out << endl << new_line;
-}
-
-
-
-
-
-
-vector<LAPTOP> read_laptop_file(string FILE_PATH, bool b)
-{
-    string temp;
-    vector<LAPTOP> my_laptops;
-    ifstream fi(FILE_PATH); // îêðûâàåì ôàéë äëÿ ÷òåíèÿ
-    if (fi.is_open())
+public:
+    Product()
     {
-        while (getline(fi, temp))
-        {
-            LAPTOP new_one;
-
-            vector<string> words;
-            words = my_split(temp, " | ");
-
-
-            new_one.model = words[0];
-            vector<string> size_values = my_split(words[1], "/");
-            size size_for_new_one = {stof(size_values[0]),stof(size_values[1]),stof(size_values[2])};
-            new_one.s = size_for_new_one;
-            new_one.w = stof(words[2]);
-            new_one.price = stoi(words[3]);
-            new_one.frequency = stoi(words[4]);
-
-            if ((b) && (new_one.frequency>120))
-            {
-                my_laptops.push_back(new_one);
-                add_record_to_the_file("D:\\frequency_120.txt", new_one);
-            } else
-            {
-                my_laptops.push_back(new_one);
-            }
-        }
+        //...
     }
-    fi.close();
 
-    //sort(my_laptops.begin(), my_laptops.end(), less_than_key());
+    void change_quantity(unsigned new_num) // изменить кол-во товара в наличии
+    {
+        if (new_num==0)
+        {
+            in_stock = false;
+            quantity = 0;
+        } else
+        {
+            in_stock = true;
+            quantity = new_num;
+        }
+
+    }
+
+private:
+    string _name;
+    string _description;
+    unsigned quantity;
+    bool in_stock;
+};
 
 
-    return my_laptops;
-}
+
+
+
+
+
+
+
+
+
+
+
+class Pharmacy_receipt // рецепт
+{
+public:
+    Pharmacy_receipt(string desease, string doctor_name, string date, string products_to_buy, string note)
+    {
+        //...
+        //обычный конструктор
+        //...
+    }
+    Pharmacy_receipt(const Pharmacy_receipt &obj) // конструктор копирования создает идентичный рецепт на примере уже существующего (чтобы назначить его другому пользователю аптеки)
+    {
+        _disease = obj._disease;
+        _doctor_name = obj._doctor_name;
+        _date = obj._date;
+        for (int i = 0; i < 10.; ++i)
+        {
+            _products_to_buy[i] = obj._products_to_buy[i];
+        }
+        _note = obj._note;
+    }
+
+
+    Pharmacy_receipt & operator = (const Pharmacy_receipt & other) // использование оператора присваивания
+    {
+        if (this != &other) // защита от неправильного самоприсваивания
+        {
+
+            // освобождаем "старую" память
+            delete [] _products_to_buy;
+
+            // присваиваем значения в "новой" памяти объекту
+            for (int i = 0; i < 10.; ++i)
+            {
+                _products_to_buy[i] = other._products_to_buy[i];
+            }
+
+
+        }
+
+        // ...
+
+        return *this;
+    }
+
+private:
+    string _disease; // заболевание
+    string _doctor_name; // имя врача, назначившего рецепт
+    string _date; // дата назначения рецепта
+    Product _products_to_buy[10]; // массив лекарств для покупки
+    string _note; // дополнительные заметки к рецепту (опционально)
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+class User // Родительский объект для Pharmacist и Buyer
+{
+public:
+    long long get_id()
+    {
+        return _id;
+    }
+private:
+    long long _id;
+    string _username;
+    string _phone_number;
+    string _city;
+    bool _is_online; // находится ли пользователь онлайн
+    bool _is_verified; // подтвержден ли аккаунт пользователя через СМС
+};
+
+
+
+
+
+
+
+
+
+
+class Pharmacist : public User // Фармацевт. Принимает запросы на покупку (request_on_purshcase)
+{
+public:
+    void request_on_purshcase(Pharmacy_receipt request_receipt, string note)
+    {
+        // если запрос на покупку содержит рецепт -> совершить покупку согласно рецепту
+
+        // если запрос не покупку не содержит рецепт -> создать рецепт согласно note и совершить покупку:
+
+        /*
+            if (request_receipt)
+                make_purchcase(request_receipt, user_id);
+            else
+                make_purchcase(create_receipt(note), user_id);
+        */
+    }
+
+    void make_purchcase(long long user_id, Pharmacy_receipt products)
+    {
+        //... денежный перевод аптеке ... совершение доставки лекарств на дом ...
+    }
+private:
+
+};
+
+
+
+
+
+
+
+
+class Buyer : public User // Покупатель. Ему могут назначить рецепт (add_receipt), он может попробовать совершить покупку, обратившись к фармацевту (buy)
+                          // Если фармацевт одобрит покупку, то она будет совершена
+{
+public:
+    void add_receipt(Pharmacy_receipt receipt_to_add)
+    {
+        current_receipt = receipt_to_add;
+    }
+
+    void buy(Pharmacist seller)
+    {
+        seller.request_on_purshcase(current_receipt,"меня беспокоит ...");
+    }
+
+private:
+    Bank_card_info _bank_info;
+    string doctor; // лечащий врач (опционально)
+    Pharmacy_receipt current_receipt;
+};
+
+
 
 
 
 int main()
 {
-    //считываем note.txt и вектор записей сохраняем в my_laptops:
-    // второй аргумент true/false - флаг фильтра частоты > 120
-    vector<LAPTOP> my_laptops = read_laptop_file("D:\\note.txt",true);
-
-    //создаем новую запись LAPTOP:
-    LAPTOP my_new_laptop;
-    my_new_laptop.model = "ggg312";
-    size my_new_laptop_size = {12.2, 12.2, 12.2};
-    my_new_laptop.s = my_new_laptop_size;
-    my_new_laptop.w = 44;
-    my_new_laptop.price = 213;
-    my_new_laptop.frequency = 23;
-
-
-    //доабвляем в конец файла note.txt:
-    add_record_to_the_file("D:\\note.txt", my_new_laptop);
-
-
-    cout << "End of program" << endl;
+    cout << "Hello world!" << endl;
     return 0;
-
 }
