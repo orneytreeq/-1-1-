@@ -1,24 +1,57 @@
 #include <iostream>
+#include "User.h"
+
+// file "User.h":
+/*
+#include <iostream>
+using namespace std;
+
+namespace N
+{
+    class User // Родительский объект для Pharmacist и Buyer
+{
+	public:
+	    void set_user_info(unsigned id, string username, string phone_number)
+	    {
+	        _id = id;
+	        _username = username;
+	        _phone_number = phone_number;
+	        _is_verified = true;
+	    }
+	bool _is_verified;
+
+	private:
+	    unsigned _id;
+	    string _username;
+	    string _phone_number;
+	    string _city;
+	    bool _is_online; // находится ли пользователь онлайн
+	};
+
+}
+
+*/
+using namespace N;
 
 using namespace std;
 
 
-//LAB-6 Р’Р°СЂРёР°РЅС‚-10
+//LAB-6 Вариант-10
 
 /*
-РџСЂРµРґРјРµС‚РЅР°СЏ РѕР±Р»Р°СЃС‚СЊ РѕРЅР»Р°Р№РЅ-Р°РїС‚РµРєРё:
+Предметная область онлайн-аптеки:
 
-Р§РµР»РѕРІРµРє Р·Р°С…РѕРґРёС‚ РІ РѕРЅР»Р°Р№РЅ-Р°РїС‚РµРєСѓ, СЂРµРіРёСЃС‚СЂРёСЂСѓРµС‚СЃСЏ, РІРІРѕРґРёС‚ Р±Р°РЅРєРѕРІСЃРєРёРµ РґР°РЅРЅС‹Рµ
-РЎРѕРіР»Р°СЃРЅРѕ СЂРµС†РµРїС‚Сѓ (Pharmacy_receipt) С‡РµР»РѕРІРµРє РїРѕРїРѕР»РЅСЏРµС‚ СЃРІРѕСЋ РєРѕСЂР·РёРЅСѓ (array of Product) Р»РµРєР°СЂСЃС‚РІР°РјРё Рё РґРµР»Р°РµС‚ Р·Р°РїСЂРѕСЃ РЅР° РїРѕРєСѓРїРєСѓ (request_on_purchcase),
-РїСЂРёР»Р°РіР°СЏ СЂРµС†РµРїС‚, РєРѕС‚РѕСЂС‹Р№ РµРјСѓ РґР°Р» РґРѕРєС‚РѕСЂ
-Р¤Р°СЂРјР°С†РµРІС‚ РїСЂРѕРІРµСЂСЏРµС‚ РЅР°Р»РёС‡РёРµ СЂРµС†РµРїС‚Р° Рё СЃРѕРІРµСЂС€Р°РµС‚ РїРѕРєСѓРїРєСѓ
+Человек заходит в онлайн-аптеку, регистрируется, вводит банковские данные
+Согласно рецепту (Pharmacy_receipt) человек пополняет свою корзину (array of Product) лекарствами и делает запрос на покупку (request_on_purchcase),
+прилагая рецепт, который ему дал доктор
+Фармацевт проверяет наличие рецепта и совершает покупку
 
 
-РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ Рё РѕРїРµСЂР°С‚РѕСЂ РїСЂРёСЃРІР°РёРІР°РЅРёСЏ СЂРµР°Р»РёР·РѕРІР°РЅС‹ РІ РєР»Р°СЃСЃРµ Pharmacy_receipt
+конструктор копирования и оператор присваивания реализованы в классе Pharmacy_receipt
 
 */
 
-struct Bank_card_info // Р‘Р°РЅРєРѕРІСЃРєР°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ
+struct Bank_card_info // Банковская информация
 {
     string card_number;
     string expiration_date;
@@ -36,15 +69,16 @@ struct Bank_card_info // Р‘Р°РЅРєРѕРІСЃРєР°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ
 
 
 
-class Product // Р»РµРєР°СЂСЃС‚РІРѕ РІ Р°РїС‚РµРєРµ, РєРѕС‚РѕСЂРѕРµ С„Р°СЂРјР°С†РµРІС‚ РјРѕР¶РµС‚ РїСЂРѕРґР°С‚СЊ
+class Product // лекарство в аптеке, которое фармацевт может продать
 {
 public:
-    Product()
+    Product(string name, unsigned q)
     {
-        //...
+        _name = name;
+        change_quantity(q);
     }
 
-    void change_quantity(unsigned new_num) // РёР·РјРµРЅРёС‚СЊ РєРѕР»-РІРѕ С‚РѕРІР°СЂР° РІ РЅР°Р»РёС‡РёРё
+    void change_quantity(unsigned new_num) // изменить кол-во товара в наличии
     {
         if (new_num==0)
         {
@@ -56,6 +90,11 @@ public:
             quantity = new_num;
         }
 
+    }
+
+    string get_name()
+    {
+        return _name;
     }
 
 private:
@@ -77,16 +116,20 @@ private:
 
 
 
-class Pharmacy_receipt // СЂРµС†РµРїС‚
+
+
+
+
+class Pharmacy_receipt // рецепт
 {
 public:
-    Pharmacy_receipt(string desease, string doctor_name, string date, string products_to_buy, string note)
+
+    Pharmacy_receipt(string disease = "none", Product *product_list = {})
     {
-        //...
-        //РѕР±С‹С‡РЅС‹Р№ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
-        //...
+        _disease = disease;
+        _products_to_buy = product_list;
     }
-    Pharmacy_receipt(const Pharmacy_receipt &obj) // РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ СЃРѕР·РґР°РµС‚ РёРґРµРЅС‚РёС‡РЅС‹Р№ СЂРµС†РµРїС‚ РЅР° РїСЂРёРјРµСЂРµ СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРіРѕ (С‡С‚РѕР±С‹ РЅР°Р·РЅР°С‡РёС‚СЊ РµРіРѕ РґСЂСѓРіРѕРјСѓ РїРѕР»СЊР·РѕРІР°С‚РµР»СЋ Р°РїС‚РµРєРё)
+    Pharmacy_receipt(const Pharmacy_receipt &obj) // конструктор копирования создает идентичный рецепт на примере уже существующего (чтобы назначить его другому пользователю аптеки)
     {
         _disease = obj._disease;
         _doctor_name = obj._doctor_name;
@@ -99,15 +142,15 @@ public:
     }
 
 
-    Pharmacy_receipt & operator = (const Pharmacy_receipt & other) // РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ РѕРїРµСЂР°С‚РѕСЂР° РїСЂРёСЃРІР°РёРІР°РЅРёСЏ
+    Pharmacy_receipt & operator = (const Pharmacy_receipt & other) // использование оператора присваивания
     {
-        if (this != &other) // Р·Р°С‰РёС‚Р° РѕС‚ РЅРµРїСЂР°РІРёР»СЊРЅРѕРіРѕ СЃР°РјРѕРїСЂРёСЃРІР°РёРІР°РЅРёСЏ
+        if (this != &other) // защита от неправильного самоприсваивания
         {
 
-            // РѕСЃРІРѕР±РѕР¶РґР°РµРј "СЃС‚Р°СЂСѓСЋ" РїР°РјСЏС‚СЊ
+            // освобождаем "старую" память
             delete [] _products_to_buy;
 
-            // РїСЂРёСЃРІР°РёРІР°РµРј Р·РЅР°С‡РµРЅРёСЏ РІ "РЅРѕРІРѕР№" РїР°РјСЏС‚Рё РѕР±СЉРµРєС‚Сѓ
+            // присваиваем значения в "новой" памяти объекту
             for (int i = 0; i < 10.; ++i)
             {
                 _products_to_buy[i] = other._products_to_buy[i];
@@ -121,100 +164,49 @@ public:
         return *this;
     }
 
+
+    Product * get_prodcuts_from_receipt()
+    {
+        return _products_to_buy;
+    }
+
 private:
-    string _disease; // Р·Р°Р±РѕР»РµРІР°РЅРёРµ
-    string _doctor_name; // РёРјСЏ РІСЂР°С‡Р°, РЅР°Р·РЅР°С‡РёРІС€РµРіРѕ СЂРµС†РµРїС‚
-    string _date; // РґР°С‚Р° РЅР°Р·РЅР°С‡РµРЅРёСЏ СЂРµС†РµРїС‚Р°
-    Product _products_to_buy[10]; // РјР°СЃСЃРёРІ Р»РµРєР°СЂСЃС‚РІ РґР»СЏ РїРѕРєСѓРїРєРё
-    string _note; // РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ Р·Р°РјРµС‚РєРё Рє СЂРµС†РµРїС‚Сѓ (РѕРїС†РёРѕРЅР°Р»СЊРЅРѕ)
+    string _disease; // заболевание
+    string _doctor_name; // имя врача, назначившего рецепт
+    string _date; // дата назначения рецепта
+    Product *_products_to_buy; // массив лекарств для покупки
+    string _note; // дополнительные заметки к рецепту (опционально)
 };
 
 
 
 
 
-
-
-
-
-
-
-
-
-class User // Р РѕРґРёС‚РµР»СЊСЃРєРёР№ РѕР±СЉРµРєС‚ РґР»СЏ Pharmacist Рё Buyer
+class Buyer : public User // Покупатель. Ему могут назначить рецепт (add_receipt), он может попробовать совершить покупку, обратившись к фармацевту (buy)
+                          // Если фармацевт одобрит покупку, то она будет совершена
 {
 public:
-    long long get_id()
+
+    Buyer(unsigned id, string username, string phone_number, Bank_card_info bank_info)
     {
-        return _id;
-    }
-private:
-    long long _id;
-    string _username;
-    string _phone_number;
-    string _city;
-    bool _is_online; // РЅР°С…РѕРґРёС‚СЃСЏ Р»Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РѕРЅР»Р°Р№РЅ
-    bool _is_verified; // РїРѕРґС‚РІРµСЂР¶РґРµРЅ Р»Рё Р°РєРєР°СѓРЅС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ С‡РµСЂРµР· РЎРњРЎ
-};
+        User::set_user_info(id, username, phone_number);
+        _bank_info = bank_info;
 
-
-
-
-
-
-
-
-
-
-class Pharmacist : public User // Р¤Р°СЂРјР°С†РµРІС‚. РџСЂРёРЅРёРјР°РµС‚ Р·Р°РїСЂРѕСЃС‹ РЅР° РїРѕРєСѓРїРєСѓ (request_on_purshcase)
-{
-public:
-    void request_on_purshcase(Pharmacy_receipt request_receipt, string note)
-    {
-        // РµСЃР»Рё Р·Р°РїСЂРѕСЃ РЅР° РїРѕРєСѓРїРєСѓ СЃРѕРґРµСЂР¶РёС‚ СЂРµС†РµРїС‚ -> СЃРѕРІРµСЂС€РёС‚СЊ РїРѕРєСѓРїРєСѓ СЃРѕРіР»Р°СЃРЅРѕ СЂРµС†РµРїС‚Сѓ
-
-        // РµСЃР»Рё Р·Р°РїСЂРѕСЃ РЅРµ РїРѕРєСѓРїРєСѓ РЅРµ СЃРѕРґРµСЂР¶РёС‚ СЂРµС†РµРїС‚ -> СЃРѕР·РґР°С‚СЊ СЂРµС†РµРїС‚ СЃРѕРіР»Р°СЃРЅРѕ note Рё СЃРѕРІРµСЂС€РёС‚СЊ РїРѕРєСѓРїРєСѓ:
-
-        /*
-            if (request_receipt)
-                make_purchcase(request_receipt, user_id);
-            else
-                make_purchcase(create_receipt(note), user_id);
-        */
     }
 
-    void make_purchcase(long long user_id, Pharmacy_receipt products)
-    {
-        //... РґРµРЅРµР¶РЅС‹Р№ РїРµСЂРµРІРѕРґ Р°РїС‚РµРєРµ ... СЃРѕРІРµСЂС€РµРЅРёРµ РґРѕСЃС‚Р°РІРєРё Р»РµРєР°СЂСЃС‚РІ РЅР° РґРѕРј ...
-    }
-private:
-
-};
-
-
-
-
-
-
-
-
-class Buyer : public User // РџРѕРєСѓРїР°С‚РµР»СЊ. Р•РјСѓ РјРѕРіСѓС‚ РЅР°Р·РЅР°С‡РёС‚СЊ СЂРµС†РµРїС‚ (add_receipt), РѕРЅ РјРѕР¶РµС‚ РїРѕРїСЂРѕР±РѕРІР°С‚СЊ СЃРѕРІРµСЂС€РёС‚СЊ РїРѕРєСѓРїРєСѓ, РѕР±СЂР°С‚РёРІС€РёСЃСЊ Рє С„Р°СЂРјР°С†РµРІС‚Сѓ (buy)
-                          // Р•СЃР»Рё С„Р°СЂРјР°С†РµРІС‚ РѕРґРѕР±СЂРёС‚ РїРѕРєСѓРїРєСѓ, С‚Рѕ РѕРЅР° Р±СѓРґРµС‚ СЃРѕРІРµСЂС€РµРЅР°
-{
-public:
     void add_receipt(Pharmacy_receipt receipt_to_add)
     {
         current_receipt = receipt_to_add;
     }
 
-    void buy(Pharmacist seller)
+
+    Pharmacy_receipt get_current_receipt()
     {
-        seller.request_on_purshcase(current_receipt,"РјРµРЅСЏ Р±РµСЃРїРѕРєРѕРёС‚ ...");
+        return current_receipt;
     }
 
 private:
     Bank_card_info _bank_info;
-    string doctor; // Р»РµС‡Р°С‰РёР№ РІСЂР°С‡ (РѕРїС†РёРѕРЅР°Р»СЊРЅРѕ)
     Pharmacy_receipt current_receipt;
 };
 
@@ -222,8 +214,79 @@ private:
 
 
 
+
+
+
+
+
+
+class Pharmacist : public User // Фармацевт. Принимает запросы на покупку (request_on_purshcase)
+{
+public:
+    void request_on_purshcase(Buyer client)
+    {
+        if (client._is_verified)
+        {
+            make_purchcase(client);
+        }
+    }
+
+    void make_purchcase(Buyer client)
+    {
+        for (int i=0;i<10;i++)
+        {
+            cout << "You bought: " + client.get_current_receipt().get_prodcuts_from_receipt()[i].get_name() << endl;
+        }
+    }
+private:
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 int main()
 {
-    cout << "Hello world!" << endl;
+    Product nurofen("nurofen", 5); //создаем лекарства и их количество в наличии
+    Product kagocel("kagocel", 5);
+    Product mixidil("mixidil", 5);
+
+    Product arr_of_products[] = {nurofen, kagocel, mixidil};
+    Pharmacy_receipt receipt_for_headache("headache",arr_of_products); // создаем рецепт, который содержит лекарства для покупки
+
+    Buyer Brendon(1, "Brendon", "+79097836723", {"1234 5678 9101 1121","12/12/12","564"}); // регистрируем нового пользователя аптеки с его банковскими данными
+    Brendon.add_receipt(receipt_for_headache);
+
+    Pharmacist worker_1; // Создаем фармацевта
+
+    worker_1.request_on_purshcase(Brendon); // пользователь посылает запрос на покупку и если все хорошо, то фармацевт совершает покупку
+
+
+
+
+
     return 0;
 }
